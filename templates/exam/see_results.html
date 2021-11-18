@@ -1,0 +1,158 @@
+{% extends 'includes/base.html' %} {% load static %} {% block title %} Student
+Exam {% endblock title %} {% block content %}
+<script src="https://apis.google.com/js/platform.js" async defer></script>
+<script type="text/javascript">
+    function Export2Doc(element, filename = ''){
+        var html = "<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'><head><meta charset='utf-8'><title>Export HTML To Doc</title></head><body>";
+        var footer = "</body></html>";
+        var html = html+document.getElementById(element).innerHTML+footer;
+    
+        
+        //link url
+        var url = 'data:application/vnd.ms-word;charset=utf-8,' + encodeURIComponent(html);
+        
+        //file name
+        filename = filename?filename+'.doc':'document.doc';
+        
+        // Creates the  download link element dynamically
+        var downloadLink = document.createElement("a");
+    
+        document.body.appendChild(downloadLink);
+        
+        //Link to the file
+        downloadLink.href = url;
+            
+        //Setting up file name
+        downloadLink.download = filename;
+            
+        //triggering the function
+        downloadLink.click();
+        //Remove the a tag after donwload starts.
+        document.body.removeChild(downloadLink);
+    }
+</script>
+<style>
+.answer-area {
+    height:1600px;
+}
+</style>
+<script>
+  const {google} = require('googleapis');
+  // // // require path
+  const path = require('path')
+  // // // file system
+  const fs = require('fs')
+
+  const CLIENT_ID =  '592854254159-b1oc2oj9j45s33h20iseou71ehbkeq3j.apps.googleusercontent.com' 
+
+  const CLIENT_SECRET = 'd-cPIp5MfJA9AAwJrSc8dDz3'  
+
+  const REDIRECT_URI = 'https://developers.google.com/oauthplayground'
+
+  const REFRESH_TOKEN = '1//04c2ikWFpmqZOCgYIARAAGAQSNwF-L9IruOygzrzO60KpciO4Qzb-HI4aHinaVMl5jkaSGfFSqh2zOUHgUg2b99l_06pBOhMJkj8'
+
+  const oauth2Client = new google.auth.OAuth2(
+      CLIENT_ID,
+      CLIENT_SECRET,
+      REDIRECT_URI
+
+  )
+
+
+  oauth2Client.setCredentials({refresh_token: REFRESH_TOKEN})
+
+  const drive = google.drive({
+  version: 'v3',
+  auth: oauth2Client
+
+  })
+
+  const filePath = path.join (__dirname, 'realText.txt');
+
+  async function uploadFile(){
+      try {
+          const responce = await drive.files.create({
+              requestBody :{
+                  name: 'FileNameToBeSavedAs.txt',
+                  mimeType: 'text/plain'
+              },
+              media:{ 
+                  mimeType:'text/plain',
+                  body: fs.createReadStream(filePath)
+              }
+          }) 
+
+          console.log(responce.data)
+
+      } catch (error) {
+          console.log(error.message)
+      }
+  }
+</script>
+
+<div class="container">
+<br><br><br><br><br><br>
+<div class="row">
+<div class="col-sm-4">
+</div>
+<div class="col-sm-8 d-print-none">
+<button class="btn btn-danger btn-sm" onclick="window.print();"><img src="{% static 'images/pdf.svg' %}" width="20px" height="20px"> Download PDF</button>
+<button class="btn btn-info btn-sm" onclick="Export2Doc('content-to-pdf');"><img src="{% static 'images/doc.svg' %}" width="20px" height="20px">Download Word-Files</button>
+{% comment %} <button class="btn btn-warning btn-sm" onclick="uploadFile()"><img src="{% static 'images/doc.svg' %}" width="20px" height="20px">Save to Drive</button> {% endcomment %}
+
+{% comment %} <button id="btn-export" class="btn btn-warning btn-sm" onclick="exportHTML();"><img src="{% static 'images/google-drive.svg' %}" width="20px" height="20px">Save to Google Drive</button> {% endcomment %}
+{% comment %} 
+<div class="g-savetodrive"
+   data-src="//localhost:8000/see-answers/"
+   data-filename="http://localhost:8000/see-answers/"
+   data-sitename="My Company Name">
+</div> {% endcomment %}
+</div>
+<div class="col-sm-2">
+</div>
+</div>
+<div class="container">
+  <br /><br /><br />
+  <div class="row">
+    {% comment %} <div class="col-sm-2">
+    </div> {% endcomment %}
+    {% for answer in answers %}
+    <div class="col-sm-6">
+        {% comment %} card start {% endcomment %}
+      <div class="card" id="content-to-pdf">
+      {% comment %} {% for answer in answers %} {% endcomment %}
+        <div class="card-body answer-area">
+          <div class="row">
+            <div class="col-sm-6">
+                <b><h4 class="cars-title">{{ exam.title }}</h4></b>
+            </div>
+          </div>
+            {% comment %} <div class="row">
+                <div class="col-sm-4"><b>Firstname:</b> {{ answer.firstname }}</div>
+                <div class="col-sm-4"><b>Lastname:</b> {{ answer.lastname }}</div>
+                <div class="col-sm-4"><b>Email:</b> {{ answer.email }}</div>
+                <div class="col-sm-4"><b>Class:</b> {{ answer.student_class }}</div>
+                <div class="col-sm-4"><b>Teacher Name:</b> {{ answer.teacher_name }}</div>
+                <div class="col-sm-4"><b>Student ID:</b> {{ answer.student_id }}</div>
+            </div> {% endcomment %}
+            <div class="row">
+                <div class="col-sm-10 col-md-offset-2"><h2>{{ student_answer.student_id }} {{ student_answer.first_name }} {{ student_answer.last_name }}</h2></div>
+                <div class="col-sm-10 col-md-offset-2"><b>Teacher: {{ student_answer.teacher_name }}</b></div>
+                <br>
+                <div class="col-sm-10 col-md-offset-2"><b>{{ student_answer.exam }}</b></div>
+            </div>
+            
+            <br><br>
+          {% comment %} <center><h3><b>Answer:</b></h3></center> {% endcomment %}
+          <p class="card-text">{{ answer.answer_area | safe }}</p>
+          <hr>
+          <br><br>
+        </div>
+        {% comment %} {% endfor %} {% endcomment %}
+      </div>
+    </div>
+    {% comment %} card end {% endcomment %}
+    {% endfor %}
+  </div>
+</div>
+{% endblock content %}

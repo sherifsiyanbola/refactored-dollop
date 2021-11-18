@@ -1,0 +1,304 @@
+{% extends 'includes/base.html' %} {% load static %} {% block title %} Create Exam {% endblock title %} {% block content %}
+<script src="https://cdn.tiny.cloud/1/4o6m40c3yx6cdl27udupevi7tk60jz79r009vovl6ozifgag/tinymce/5/tinymce.min.js" referrerpolicy="origin"></script>
+<script>
+
+tinymce.init({
+  selector: '#editor',
+  height: 700,
+  plugins: 'image code | autosave',
+  toolbar: 'undo redo | link image | code | restoredraft',
+  /* enable title field in the Image dialog*/
+  image_title: true,
+  /* enable automatic uploads of images represented by blob or data URIs*/
+  automatic_uploads: true,
+  /*
+    URL of our upload handler (for more details check: https://www.tiny.cloud/docs/configure/file-image-upload/#images_upload_url)
+    images_upload_url: 'postAcceptor.php',
+    here we add custom filepicker only to Image dialog
+  */
+  file_picker_types: 'image',
+  /* and here's our custom image picker*/
+  file_picker_callback: function (cb, value, meta) {
+    var input = document.createElement('input');
+    input.setAttribute('type', 'file');
+    input.setAttribute('accept', 'image/*');
+
+    /*
+      Note: In modern browsers input[type="file"] is functional without
+      even adding it to the DOM, but that might not be the case in some older
+      or quirky browsers like IE, so you might want to add it to the DOM
+      just in case, and visually hide it. And do not forget do remove it
+      once you do not need it anymore.
+    */
+
+    input.onchange = function () {
+      var file = this.files[0];
+
+      var reader = new FileReader();
+      reader.onload = function () {
+        /*
+          Note: Now we need to register the blob in TinyMCEs image blob
+          registry. In the next release this part hopefully won't be
+          necessary, as we are looking to handle it internally.
+        */
+        var id = 'blobid' + (new Date()).getTime();
+        var blobCache =  tinymce.activeEditor.editorUpload.blobCache;
+        var base64 = reader.result.split(',')[1];
+        var blobInfo = blobCache.create(id, file, base64);
+        blobCache.add(blobInfo);
+
+        /* call the callback and populate the Title field with the file name */
+        cb(blobInfo.blobUri(), { title: file.name });
+      };
+      reader.readAsDataURL(file);
+    };
+
+    input.click();
+  },
+  content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }'
+});
+{% comment %} tinymce.init({
+  selector: 'textarea',  // change this value according to your HTML
+  plugins: 'autosave',
+  toolbar: 'restoredraft'
+}); {% endcomment %}
+
+</script>
+
+<!--content goes here-->
+<!-- CARD 1___________________________________________________________-->
+
+<div class="row">
+    <div class=" col-sm-5  other-sections card shadow-sm p-3 pb-4 shadow mx-auto">
+
+        <div class="d-flex">
+            <img src="{% static 'images/create-exam.svg' %}" class="blue-logos ">
+            <span class="headings px-2">Create New Exam</span>
+        </div>
+
+        <hr class="mt-2">
+        <div class="container mt-4 ">
+            <form> 
+             {% comment %} {% csrf_token %}  {% endcomment %}
+                <div class="form-group mx-5 ">
+                    <label for "exam_name" class="inter-texts headings" style="font-size:14px">Assign the exam a name (as shown in
+            the exam list)</label><br>
+                    <input type="text" class="form-control text-input martel-texts mt-2"  id="title" placeholder="Exam" name="title" required=required>
+                </div>
+
+            
+        </div>
+    </div>
+</div>
+
+
+
+<!-- CARD 2___________________________________________________________-->
+<div class="row">
+    <div class="col-sm-10  other-sections card shadow-sm p-3 pb-4 shadow mx-auto mt-5 ">
+
+        <div class="d-flex">
+            <img src="{% static 'images/exam-questions.svg' %}" class="blue-logos mx-1">
+            <span class="headings px-2">Exam Questions</span>
+        </div>
+
+        <hr class="mt-2">
+        <div class="container mt-4 ">
+                <div class="form-group mx-5">
+
+                    <div class="form-check mt-3">
+                        <label class="form-check-label">
+              <input type="radio" class="form-check-input" name="nodigital" id="nodigital">
+              <p class="inter-texts text-18 "> <b>No digital exam questions</b></p>
+              <p class="text-14 martel-texts mt-1">Assign the exam a name (as shown in the exam list)</p>
+            </label>
+                    </div>
+
+
+<div class="accordion" id="accordionExample">
+  <div class="accordion-item">
+    <h2 class="accordion-header" id="headingOne">
+      <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+        <p class="inter-texts text-18 "> <b>Use a PDF file</b></p>
+      </button>
+    </h2>
+    <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
+      <div class="accordion-body">
+        <input type="file" class="" onchange="handleUpload(event)" id="uploadpdf" name="uploadpdf" />
+      </div>
+    </div>
+  </div>
+  <div class="accordion-item">
+    <h2 class="accordion-header" id="headingTwo">
+      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+        <p class="inter-texts text-18 "> <b>Write exam questions</b></p>
+      </button>
+    </h2>
+    <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
+      <div class="accordion-body">
+        <p class="text-14 martel-texts mt-1">Write your questions here or paste from Microsoft Word</p>
+        {% comment %} <textarea id="textarea" name="textarea">
+
+        </textarea> {% endcomment %}
+
+        <textarea id="editor" name="editor"></textarea>
+
+
+
+
+    <!--
+      Sourcing the `tinymce-webcomponent` from jsDelivr,
+      which sources TinyMCE from the Tiny Cloud.
+    -->
+    <script src="https://cdn.jsdelivr.net/npm/@tinymce/tinymce-webcomponent@1/dist/tinymce-webcomponent.min.js"></script>
+      </div>
+    </div>
+  </div>
+  </div>
+</div>
+
+
+                </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- CARD 3___________________________________________________________-->
+<div class="row">
+    <div class=" col-sm-7  other-sections card shadow-sm p-3 pb-4 shadow mx-auto mt-5 ">
+
+        <div class="d-flex">
+            <img src="{% static 'images/anonymize-exam.svg' %}" class="blue-logos mx-1 ">
+            <span class="headings px-2">Student Information</span>
+        </div>
+
+        <hr class="mt-2">
+        <div class="container mt-4 ">
+                <div class="form-group mx-5 ">
+                    <p class=" mx-5 text-14"><b>Tick the information that the students have to provide before the examination</b>
+                    </p>
+
+                    <div class="form-check mx-4 mt-4">
+                        <label class="form-check-label">
+              <input type="checkbox" class="form-check-input " value="" id="firstname" name="firstname"/><b class="text-14">First name</b>
+            </label>
+                    </div>
+
+                    <div class="form-check mx-4 mt-3">
+                        <label class="form-check-label">
+              <input type="checkbox" class="form-check-input " value="" id="lastname" name="lastname" /><b class="text-14">Last name</b>
+            </label>
+                    </div>
+
+                    <div class="form-check mx-4 mt-3">
+                        <label class="form-check-label">
+              <input type="checkbox" class="form-check-input " value="" id="email" name="email" /><b class="text-14">Email</b>
+            </label>
+                    </div>
+
+                    <div class="form-check mx-4 mt-3">
+                        <label class="form-check-label">
+              <input type="checkbox" class="form-check-input " value="" id="class" name="class" /><b class="text-14">Class</b>
+            </label>
+                    </div>
+
+                    <div class="form-check mx-4 mt-3">
+                        <label class="form-check-label">
+              <input type="checkbox" class="form-check-input " value="" id="tname" name="tname" /><b class="text-14">Teacher name</b>
+            </label>
+                    </div>
+
+
+                    <div class="form-check mx-4 mt-3">
+                        <label class="form-check-label">
+              <input type="checkbox" class="form-check-input " value="" id="pnumber" name="pnumber" /><b class="text-14">Phone number</b>
+            </label>
+                    </div>
+
+                    <div class="form-check mx-4 mt-3">
+                        <label class="form-check-label">
+              <input type="checkbox" class="form-check-input " value="" id="studentid" name="studentid" /><b class="text-14">Student ID</b>
+            </label>
+                    </div>
+
+
+                    <p class=" normal-text text-center mt-4 text-14 text-warning">Student ID is the username that the school uses. This is not your social security number or similar.</p>
+                    <hr class="mt-4 mx-auto" style="width: 70%">
+{% comment %} 
+                    <p class="headings mx-4 mt-4 mb-2">Anonymize Exam</p>
+                    <p class="mx-4 mb-4 blue-texts text-14"><b>Students’ identities are replaced by unique codes. You may reveal
+              the identities after grading
+              the exams. </b></p>
+
+
+                    <label class="switch mx-4">
+            <input type="checkbox">
+            <span class="slider round"></span> {% endcomment %}
+          </label>
+                    <br>
+
+                    {% comment %} <p class="mx-4 mt-4"><b><u>
+                <a href="#" class="text-14 "> How does this work?</a>
+              </u></b></p> {% endcomment %}
+
+                </div>
+                {% comment %} <button onclick=submit() class="btn btn-danger">submit</button> {% endcomment %}
+                <input type="submit" name = "submit" value = "Create"  class = "btn btn-danger btn-lg"/>
+             </form> 
+        </div>
+    </div>
+</div>
+
+<!-- <script src="{% static 'js/axios.min.js' %}"></script> -->
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script>
+
+pickedFile = null; // save the picked file in this
+
+handleUpload = event => {
+  // event.preventDefault();
+  this.pickedFile = event.target.files[0];
+}
+
+form.addEventListener('submit', this.submit())
+
+// form.addEventListener('submit', function(event) {
+//     event.preventDefault()
+    
+//     let data = new FormData();
+
+function submit(){
+ 
+    let data = new FormData();
+
+    let x = document.getElementById('title')
+    
+    data.append("title", document.getElementById('title').value)  
+    data.append("nodigital", document.getElementById('nodigital').value)
+    data.append("uploadpdf", this.pickedFile)
+    data.append("editor", document.getElementById('editor').value)
+    data.append("firstname", document.getElementById('firstname').value)
+    data.append("lastname", document.getElementById('lastname').value)
+    data.append("email", document.getElementById('email').value)
+    data.append("number", document.getElementById('pnumber').value)
+    data.append("csrfmiddlewaretoken", '{{csrf_token}}')
+
+    axios.post('/create-exam', data)
+     //.then(res => console.log(res.data))
+     .then(res => window.location.assign('/'))
+     .catch(errors => console.log(errors))
+
+}
+
+
+
+
+var myCollapse = document.getElementById('myCollapse')
+var bsCollapse = new bootstrap.Collapse(myCollapse, {
+  toggle: false
+})
+
+</script>
+
+{% endblock content %}

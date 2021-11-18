@@ -1,0 +1,73 @@
+{% extends 'includes/base.html' %}
+{% load static %}
+{% block title %}
+Student Exam
+{% endblock title %}
+
+
+{% block content %}
+<!--content goes here-->
+<div class="header">
+    Exam Portal
+  </div>
+    <div class="row sw-body">
+      <div class="col-md-11 bg-white sw-qna-card">
+       <div class="row">
+         <div class="col sw-question">
+           <div class="card sw">
+             <div class="d-flex card-body sw">
+               <img src="{% static 'images/images/file-text-fill.svg' %}" class="sw-icon">
+               <h5 class="sw-title">Questions</h5>
+             </div>
+           </div>
+         </div>
+         <div class="col answer">
+           <div class="card sw">
+             <div class="card-body sw">
+               <h5 class="sw-title">Student Workspace</h5>
+             </div>
+           </div>
+        </div>
+       </div> 
+      </div>
+      <div class="col-md-1 side-n" >
+        <div class="row ml-4">
+          <nav class="nav side-barr flex-column">
+            <li class="nav-item">
+              <a class="nav-link active" href="#"></a>
+            </li>
+            <li class="nav-item sw-iconwg">
+              <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true"><img src="{% static 'images/images/outline-calculator.svg' %}"></a>
+            </li>
+            <li class="nav-item sw-iconwg">
+              <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true"><img src="{% static 'images/images/outline-doc.svg' %}"></a>
+            </li>
+            <li class="nav-item sw-iconwg">
+              <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true"><img src="{% static 'images/images/outline-terminal.svg' %}"></a>
+            </li>
+            <li class="nav-item sw-iconwg">
+              <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true"><img src="{% static 'images/images/outline-draw.svg' %}"></a>
+            </li>
+          </nav>
+        </div>
+      </div>
+        <nav class="nav flex-column">
+          <li class="nav-item">
+            <a class="nav-link active" href="#"></a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true"><img src="{% static 'images/images/outline-calculator.svg' %}" class="sw-iconwg"></a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true"><img src="{% static 'images/images/outline-doc.svg' %}" class="sw-iconwg"></a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true"><img src="{% static 'images/images/outline-terminal.svg' %}" class="sw-iconwg"></a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true"><img src="{% static 'images/images/outline-draw.svg' %}" class="sw-iconwg"></a>
+          </li>
+        </nav>
+      </div>
+    </div>
+{% endblock content %} 

@@ -1,0 +1,697 @@
+{% extends 'includes/base.html' %}
+{% load static %}
+{% block title %}
+Student Exam
+{% endblock title %}
+
+
+{% block content %}
+<style>
+* {
+    margin: 0;
+    padding: 0;
+}
+
+
+article {
+    width: 100px;
+    text-align: center;
+    background-color: black;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 3px 3px 10px #ccc;
+}
+
+article h3 {
+    padding: 10px;
+    color: #fff;
+}
+article .count {
+}
+article #timer{
+    color: crimson;
+    background-color: aliceblue;
+    border-radius: 2px;
+}
+
+@import url(https://fonts.googleapis.com/css?family=Droid+Sans+Mono|Pacifico|Oxygen);
+
+body {
+  background-color: darkkhaki;
+}
+
+p {
+  margin: 0;
+  font-family: Pacifico;
+  position: relative;
+  left: 5%;
+}
+
+.calculator {
+  position: relative;
+  margin: 1em auto;
+  padding: 1em 0;
+  display: block-inline;
+  width: 350px;
+  background-color: #444;
+  border-radius: 25px;
+  box-shadow: 5px 5px 15px 3px #111;
+  font-family: 'Oxygen';
+}
+
+.calc-row {
+  text-align: center;
+}
+
+.calc-row div.screen {
+  font-family: Droid Sans Mono;
+  display: table;
+  width: 85%;
+  background-color: #aaa;
+  text-align: right;
+  font-size: 2em;
+  min-height: 1.2em;
+  margin-left: 0.5em;
+  padding-right: 0.5em;
+  border: 1px solid #888;
+  color: #333;
+}
+
+.calc-row div {
+  text-align: center;
+  display: inline-block;
+  font-weight: bold;
+  border: 1px solid #555;
+  background-color: #eee;
+  padding: 10px 0;
+  margin: 7px 5px;
+  border-radius: 15px;
+  box-shadow: 2px 2px 1px 1px #222;
+  width: 50px;
+}
+
+.calc-row div.zero {
+  width: 112px;
+}
+
+.calc-row div.zero {
+  margin-right: 5px;
+}
+
+body {
+  font-family: "Lato", sans-serif;
+}
+
+.sidenav {
+  height: 100%;
+  width: 100px;
+  position: fixed;
+  z-index: 1;
+  top: 0;
+  left: 0;
+  background-color: #111;
+  overflow-x: hidden;
+  padding-top: 20px;
+}
+
+.sidenav a {
+  padding: 6px 8px 6px 16px;
+  text-decoration: none;
+  font-size: 17px;
+  color: #fff;
+  display: block;
+}
+
+.sidenav a:hover {
+  color: #f1f1f1;
+}
+
+.main {
+  margin-left: 250px; /* Same as the width of the sidenav */
+  font-size: 28px; /* Increased text to enable scrolling */
+  padding: 0px 10px;
+}
+
+@media screen and (max-height: 450px) {
+  .sidenav {padding-top: 15px;}
+  .sidenav a {font-size: 18px;}
+
+.modal-body {
+  width: 100px;
+}
+}
+</style>
+<script src="https://www.desmos.com/api/v0.4/calculator.js?apiKey=dcb31709b452b1cf9dc26972add0fda6"></script>
+<script src="https://cdn.tiny.cloud/1/4o6m40c3yx6cdl27udupevi7tk60jz79r009vovl6ozifgag/tinymce/5/tinymce.min.js" referrerpolicy="origin"></script>
+<script>
+tinymce.init({
+  selector: '#editor',
+  height: 700,
+  plugins: 'image code',
+  toolbar: 'undo redo | link image | code | restoredraft',
+  /* enable title field in the Image dialog*/
+  image_title: true,
+  /* enable automatic uploads of images represented by blob or data URIs*/
+  automatic_uploads: true,
+  /*
+    URL of our upload handler (for more details check: https://www.tiny.cloud/docs/configure/file-image-upload/#images_upload_url)
+    images_upload_url: 'postAcceptor.php',
+    here we add custom filepicker only to Image dialog
+  */
+  file_picker_types: 'image',
+  /* and here's our custom image picker*/
+  file_picker_callback: function (cb, value, meta) {
+    var input = document.createElement('input');
+    input.setAttribute('type', 'file');
+    input.setAttribute('accept', 'image/*');
+
+    /*
+      Note: In modern browsers input[type="file"] is functional without
+      even adding it to the DOM, but that might not be the case in some older
+      or quirky browsers like IE, so you might want to add it to the DOM
+      just in case, and visually hide it. And do not forget do remove it
+      once you do not need it anymore.
+    */
+
+    input.onchange = function () {
+      var file = this.files[0];
+
+      var reader = new FileReader();
+      reader.onload = function () {
+        /*
+          Note: Now we need to register the blob in TinyMCEs image blob
+          registry. In the next release this part hopefully won't be
+          necessary, as we are looking to handle it internally.
+        */
+        var id = 'blobid' + (new Date()).getTime();
+        var blobCache =  tinymce.activeEditor.editorUpload.blobCache;
+        var base64 = reader.result.split(',')[1];
+        var blobInfo = blobCache.create(id, file, base64);
+        blobCache.add(blobInfo);
+
+        /* call the callback and populate the Title field with the file name */
+        cb(blobInfo.blobUri(), { title: file.name });
+      };
+      reader.readAsDataURL(file);
+    };
+
+    input.click();
+  },
+  content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }'
+});
+
+
+{% comment %} if (sec<20) {% endcomment %}
+
+var elem = document.documentElement;
+function openFullscreen() {
+  if (elem.requestFullscreen) {
+    elem.requestFullscreen();
+  } else if (elem.webkitRequestFullscreen) { /* Safari */
+    elem.webkitRequestFullscreen();
+  } else if (elem.msRequestFullscreen) { /* IE11 */
+    elem.msRequestFullscreen();
+  }
+}
+
+
+
+// <!-- Chatra {literal} -->
+
+//     (function(d, w, c) {
+//         w.ChatraID = 'hYufMSXuKuSmS2nRe';
+//         var s = d.createElement('script');
+//         w[c] = w[c] || function() {
+//             (w[c].q = w[c].q || []).push(arguments);
+//         };
+//         s.async = true;
+//         s.src = 'https://call.chatra.io/chatra.js';
+//         if (d.head) d.head.appendChild(s);
+//     })(document, window, 'Chatra');
+
+// <!-- /Chatra {/literal} -->
+
+
+(function()
+{
+  if( window.localStorage )
+  {
+    if( !localStorage.getItem('firstLoad') )
+    {
+      localStorage['firstLoad'] = true;
+      window.location.reload();
+    }  
+    else
+      localStorage.removeItem('firstLoad');
+  }
+})();
+
+
+
+
+</script>
+
+
+
+
+<!--content goes here-->
+
+<div class="sidenav">
+<br>
+<br>
+<br>
+<br>
+{% comment %} <button type="button" class="btn btn-secondary btn-sm" data-toggle="modal" data-target="#exampleModal">
+  calculator
+</button>
+<button type="button" class="btn btn-secondary btn-sm" data-toggle="modal" data-target="#example1Modal">
+  Desmos
+</button> {% endcomment %}
+
+
+
+{% if exam.calc %}  <a href="#about" data-toggle="modal" data-target="#exampleModal">Calculator</a>{% endif %}
+  {% comment %} {% if 'SEB' not in  user_agent  %}
+  <h1> You are not using Safe Exam Browser</h1>
+  {% else %}
+  <h1> You are using Safe Exam Browser</h1>
+  {% endif %} {% endcomment %}
+ 
+{% if exam.desmos_calc %}<a href="#services" data-toggle="modal" data-target="#example1Modal">Desmos</a>{% endif %}
+  {% comment %} <input type="file" name = "solution" id="solution" /> {% endcomment %}
+</div>
+
+
+
+<div id="container main">
+<div class="header">
+    Exam Portal
+  </div>
+
+{% if exam.exam_open == False %}
+<div id="fullscreen" class="html5-fullscreen-api">
+    <div class=" col-sm-5  other-sections card shadow-sm p-3 pb-4 shadow mx-auto">
+
+        <div class="d-flex">
+            <img src="{% static 'images/exam-close.svg' %}" class="blue-logos ">
+            <span class="headings px-2"><h3>{{exam.title}} exam Closed </h3></span>
+
+        </div>
+
+        <hr class="mt-2">
+        </div>
+    </div>
+</div>
+{% else %}
+<div class="row">
+<div class=" col-sm-1">
+</div>
+    <div class=" col-sm-5  other-sections card shadow-sm p-3 pb-4 shadow mx-auto mt-5 ">
+        <div class="d-flex">
+            <img src="{% static 'images/anonymize-exam.svg' %}" class="blue-logos mx-1 ">
+            <span class="headings px-2">{{ exam.title }} Preview</span>
+
+            <!-- Button trigger modal -->
+            {% comment %} calc {% endcomment %}
+{% comment %} <button type="button" class="btn btn-secondary btn-sm" data-toggle="modal" data-target="#exampleModal">
+  calculator
+</button> {% endcomment %}
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Calculator</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+          <div class="calculator">
+  <div class="calc-row">
+    <div class="screen">0123456789</div>
+  </div>
+ 
+  <div class="calc-row">
+    <div class="button">C</div><div class="button">CE</div><div class="button backspace">back</div><div class="button plus-minus">+/-</div><div class="button">%</div>
+  </div>
+  
+  <div class="calc-row">
+    <div class="button">7</div><div class="button">8</div><div class="button">9</div><div class="button divice">/</div><div class="button root">sqrt</div>
+  </div>
+  
+  <div class="calc-row">
+    <div class="button">4</div><div class="button">5</div><div class="button">6</div><div class="button multiply">*</div><div class="button inverse">1/x</div>
+  </div>
+  
+  <div class="calc-row">
+    <div class="button">1</div><div class="button">2</div><div class="button">3</div><div class="button">-</div><div class="button pi">pi</div>
+  </div>
+ 
+  <div class="calc-row">
+    <div class="button zero">0</div><div class="button decimal">.</div><div class="button">+</div><div class="button equal">=</div>
+  </div>
+</div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+{% comment %} calc {% endcomment %}
+
+{% comment %} desmos {% endcomment %}
+{% comment %} <button type="button" class="btn btn-secondary btn-sm" data-toggle="modal" data-target="#example1Modal">
+  Desmos
+</button> {% endcomment %}
+
+<!-- Modal -->
+<div class="modal fade" id="example1Modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="example1ModalLabel">Desmos</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+           <div id="calculator" style="width: 400px; height: 400px;"></div>
+             <script>
+    var elt = document.getElementById('calculator');
+    var calculator = Desmos.Calculator(elt);
+    calculator.setExpression({id:'graph1', latex:'y=x^2'});
+  </script>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+{% comment %} desmos {% endcomment %}
+
+        </div>
+
+        <hr class="mt-2">
+        <div class="container mt-4 ">
+            {% if exam.editor %}
+            {{exam.editor | safe }}
+            {% elif exam.nodigital %}
+            <h4> Exam is not digital </h4>
+            {% else %}
+                <div class="form-group mx-5 ">
+                    <iframe src="{{exam.uploadpdf.url}}" width="450px" height="700px">
+                    </iframe> 
+                </div>
+                
+            {% endif %}
+        </div>
+    </div>
+    <div class=" col-sm-5  other-sections card shadow-sm p-3 pb-4 shadow mx-auto mt-5 ">
+
+        <div class="d-flex">
+
+
+  <script>
+  $(document).ready(function() {
+  var result = 0;
+  var prevEntry = 0;
+  var operation = null;
+  var currentEntry = '0';
+  updateScreen(result);
+  
+  $('.button').on('click', function(evt) {
+    var buttonPressed = $(this).html();
+    console.log(buttonPressed);
+    
+    if (buttonPressed === "C") {
+      result = 0;
+      currentEntry = '0';
+    } else if (buttonPressed === "CE") {
+      currentEntry = '0';
+    } else if (buttonPressed === "back") {
+      //currentEntry = currentEntry.substring(0, currentEntry.length-1);
+    } else if (buttonPressed === "+/-") {
+      currentEntry *= -1;
+    } else if (buttonPressed === '.') {
+      currentEntry += '.';
+    } else if (isNumber(buttonPressed)) {
+      if (currentEntry === '0') currentEntry = buttonPressed;
+      else currentEntry = currentEntry + buttonPressed;
+    } else if (isOperator(buttonPressed)) {
+      prevEntry = parseFloat(currentEntry);
+      operation = buttonPressed;
+      currentEntry = '';
+    } else if(buttonPressed === '%') {
+      currentEntry = currentEntry / 100;
+    } else if (buttonPressed === 'sqrt') {
+      currentEntry = Math.sqrt(currentEntry);
+    } else if (buttonPressed === '1/x') {
+      currentEntry = 1 / currentEntry;
+    } else if (buttonPressed === 'pi') {
+      currentEntry = Math.PI;
+    } else if (buttonPressed === '=') {
+      currentEntry = operate(prevEntry, currentEntry, operation);
+      operation = null;
+    }
+    
+    updateScreen(currentEntry);
+  });
+});
+
+updateScreen = function(displayValue) {
+  var displayValue = displayValue.toString();
+  $('.screen').html(displayValue.substring(0, 10));
+};
+
+isNumber = function(value) {
+  return !isNaN(value);
+}
+
+isOperator = function(value) {
+  return value === '/' || value === '*' || value === '+' || value === '-';
+};
+
+operate = function(a, b, operation) {
+  a = parseFloat(a);
+  b = parseFloat(b);
+  console.log(a, b, operation);
+  if (operation === '+') return a + b;
+  if (operation === '-') return a - b;
+  if (operation === '*') return a * b;
+  if (operation === '/') return a / b;
+}
+  </script>
+
+            <img src="{% static 'images/anonymize-exam.svg' %}" class="blue-logos mx-1 ">
+            <span class="headings px-2">Student Workspace/Answer Area</span>
+        </div>
+        <p id="time_warning" class="bg-warning"></p>
+
+        <hr class="mt-2">
+        <div class="container mt-4">
+{% comment %} <div align="center " id="time001">time_convert()</div> {% endcomment %}
+        <!-- Creat Countdown Timer -->
+{% comment %} <article class="" id="model3">
+  <h3></h3>
+  <div class="btn">
+    <!-- <div><h5 id="exam_countdown" > {{exam.time|date:"M,d,Y H:m:s"}}
+    </h5></div> -->
+    <div><h5 id="exam_countdown" > {{exam.time|date:"M,d,Y H::s"}} </h5></div>
+  </div>
+</article> {% endcomment %}
+
+<div><h5 id="exam_countdown" > {{exam.time|date:"M,d,Y H:i:s"}} </h5></div>
+
+<div class="pubble-app" data-app-id="104778" data-app-identifier="104778"></div>
+<script type="text/javascript" src="https://cdn.chatify.com/javascript/loader.js" defer></script>
+        <form method="POST" action="" id="answer" name="answer" @submit.prevent="answer">
+        {% csrf_token %}
+        <center>
+        <textarea id="editor" name="editor">
+        
+        {% if student_answer.answer_area %}
+
+        {{student_answer.answer_area}}
+        
+        {% else %}
+        {% endif %}
+        
+        </textarea>
+        <br>
+        {% comment %} <input type="submit" name="save" id="save" value="Save Progress" class="btn btn-info" /> {% endcomment %}
+        <input type="submit" name="submit" id="submit" value="Submit" class="btn btn-success" onClick='return confirmSubmit()' />
+        
+        </center>
+        
+        </form>
+
+        {% comment %} <form method="POST" action="" id="answer" name="answer">
+        {% csrf_token %}
+        <input type="submit" name="" id="submit" value="Submit" class="btn btn-danger" onClick='return confirmSubmit()' />
+        
+        </form> {% endcomment %}
+        
+        {% comment %} <form method="POST" action="" id="progress" name="progress">
+        {% csrf_token %}
+        <input type="submit" name="save_progress" id="save_progress" value="Save Progress" class="btn btn-danger" onClick='return confirmSubmit()' />
+        </form> {% endcomment %}
+    <!--
+      Sourcing the `tinymce-webcomponent` from jsDelivr,
+      which sources TinyMCE from the Tiny Cloud.
+    -->
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+ 
+{% comment %} script goes here {% endcomment %}
+<script> 
+  const countdown = document.getElementById('exam_countdown')
+  console.log(countdown.textContent)
+  const deadline = Date.parse(countdown.textContent)
+  console.log(deadline)
+  
+  setInterval(()=>{
+    const now = new Date().getTime()
+    // console.log(now)
+    
+    // Find the distance between now and the count down date
+    const diff = deadline - now
+    // console.log(diff) 
+    // Time calculations for days, hours, minutes and seconds
+    var days = Math.floor(diff / (1000 * 60 * 60 * 24));
+    var hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    var minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+    var seconds = Math.floor((diff % (1000 * 60)) / 1000);    
+      
+    if (minutes == 10){
+      if (seconds == 0){
+        alert("You have 10 Minutes remaining")
+      }
+    }
+    // If the count down is over, write some text 
+    if (deadline < now) {
+      // clearInterval(x);
+      // document.getElementById("exam_countdown").innerHTML = "Time Out";
+      // document.getElementById("container").innerHTML= "Exam has Timed out"
+      // alert("Time is out") +
+      window.location.href='http://localhost:8000'
+    }
+     else {
+      // Output the result in an element with id="demo"
+    document.getElementById("exam_countdown").innerHTML =  hours + "H "
+    + minutes + "m " + seconds + "s ";
+    }
+
+  }, 1000)
+
+
+
+
+{% comment %} This disables back button when the time starts running {% endcomment %}
+
+    // Again because Google Chrome doesn't insert
+    // the first hash into the history
+
+function confirmSubmit()
+  {
+  var agree=confirm("Are you sure you want to submit ?");
+  if (agree)
+    return true ;
+  else
+    return false ;
+  }
+
+// form.addEventListener('submit', function(event) {
+//     event.preventDefault()
+    
+//     let data = new FormData();
+    
+//     data.append("answer_area", document.getElementById('editor').value)  
+//     data.append("csrfmiddlewaretoken", '{{csrf_token}}')
+    
+//     axios.post('/view_exam', data)
+//      .then(res => alert("Answer Submitted Successfully"))
+//      .catch(errors => console.log(errors))
+
+// })
+
+
+// form.addEventListener('save_progress', function(event) {
+//     event.preventDefault()
+    
+//     let data = new SaveData();
+    
+//     data.append("answer_area", document.getElementById('editor').value)  
+//     data.append("csrfmiddlewaretoken", '{{csrf_token}}')
+    
+//     axios.post('/save_exam', data)
+//      .then(res => alert("Answer Save Successfully"))
+//      .catch(errors => console.log(errors))
+
+// })
+
+
+
+var myCollapse = document.getElementById('myCollapse')
+var bsCollapse = new bootstrap.Collapse(myCollapse, {
+  toggle: false
+})
+
+
+</script>
+
+
+<!-- <script>
+  /* need */
+  
+  var secs = 1000 // number of seconds will be fixed 
+  var mins =parseInt(prompt("enter the numbers of min"))* 60 *1000
+  var hrs =parseInt(prompt("enter the num of hours"))* 60 * 60 *1000
+  
+   if(localStorage.getItem("count_timer")){
+      var count_timer = localStorage.getItem("count_timer");
+  } else {
+      var count_timer = hrs+mins+secs// 1000*60*60*24;
+  }
+  var hours = parseInt((count_timer%(1000*60*60*24))/(1000*60*60));
+  var minutes = parseInt((count_timer%(1000*60*60))/(1000*60));
+  var seconds = parseInt((count_timer%(1000*60))/(1000));
+  function countDownTimer(){
+      if(seconds < 10){
+          seconds= "0"+ seconds ;
+      }if(minutes < 10){
+          minutes= "0"+ minutes ;
+      }if (hours <10){
+          hours="0"+hours;
+      }
+      
+    document.getElementById("exam_countdown").innerHTML = "Time Left : "+hours + "hours " +minutes+" Minutes "+seconds+" Seconds";
+      if(count_timer <= 0){
+          localStorage.clear("count_timer");
+      } else {
+          count_timer = count_timer -(1*1000) ;
+          hours = parseInt((count_timer%(1000*60*60*24))/(1000*60*60));
+          console.log("hours "+ hours)
+          minutes = parseInt((count_timer%(1000*60*60))/(1000*60));
+          console.log("minutes "+ minutes)
+          seconds = parseInt((count_timer%(1000*60))/(1000));
+          console.log("seconds "+ seconds)
+          localStorage.setItem("count_timer",count_timer);
+          setTimeout("countDownTimer()",1000);
+      }
+  }
+  setTimeout("countDownTimer()",1000);
+  
+
+</script> -->
+
+    <script src="https://cdn.jsdelivr.net/npm/@tinymce/tinymce-webcomponent@1/dist/tinymce-webcomponent.min.js"></script>
+
+        </div>
+</div>
+</div>
+{% endif %}
+{% endblock content %} 

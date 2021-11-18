@@ -1,0 +1,487 @@
+{% extends 'includes/base.html' %} {% load static %} {% block title %} Create
+Exam {% endblock title %} {% block content %}
+<script
+  src="https://cdn.tiny.cloud/1/4o6m40c3yx6cdl27udupevi7tk60jz79r009vovl6ozifgag/tinymce/5/tinymce.min.js"
+  referrerpolicy="origin"
+></script>
+<script>
+  tinymce.init({
+    selector: "#editor",
+    height: 700,
+    plugins: "image code | autosave",
+    toolbar: "undo redo | link image | code | restoredraft",
+    /* enable title field in the Image dialog*/
+    image_title: true,
+    /* enable automatic uploads of images represented by blob or data URIs*/
+    automatic_uploads: true,
+    /*
+          URL of our upload handler (for more details check: https://www.tiny.cloud/docs/configure/file-image-upload/#images_upload_url)
+          images_upload_url: 'postAcceptor.php',
+          here we add custom filepicker only to Image dialog
+        */
+    file_picker_types: "image",
+    /* and here's our custom image picker*/
+    file_picker_callback: function (cb, value, meta) {
+      var input = document.createElement("input");
+      input.setAttribute("type", "file");
+      input.setAttribute("accept", "image/*");
+
+      /*
+              Note: In modern browsers input[type="file"] is functional without
+              even adding it to the DOM, but that might not be the case in some older
+              or quirky browsers like IE, so you might want to add it to the DOM
+              just in case, and visually hide it. And do not forget do remove it
+              once you do not need it anymore.
+            */
+
+      input.onchange = function () {
+        var file = this.files[0];
+
+        var reader = new FileReader();
+        reader.onload = function () {
+          /*
+                      Note: Now we need to register the blob in TinyMCEs image blob
+                      registry. In the next release this part hopefully won't be
+                      necessary, as we are looking to handle it internally.
+                    */
+          var id = "blobid" + new Date().getTime();
+          var blobCache = tinymce.activeEditor.editorUpload.blobCache;
+          var base64 = reader.result.split(",")[1];
+          var blobInfo = blobCache.create(id, file, base64);
+          blobCache.add(blobInfo);
+
+          /* call the callback and populate the Title field with the file name */
+          cb(blobInfo.blobUri(), { title: file.name });
+        };
+        reader.readAsDataURL(file);
+      };
+
+      input.click();
+    },
+    content_style:
+      "body { font-family:Helvetica,Arial,sans-serif; font-size:14px }",
+  });
+
+  $("#splat").on("click", function () {
+    $("input[type=checkbox]").prop("checked", false);
+  });
+</script>
+
+<div id="container">
+  <form id="exam-form" @submit.prevent="submit">
+    <div class="row">
+      <div
+        class="col-sm-10 other-sections card shadow-sm p-3 pb-4 shadow mx-auto"
+      >
+        <div class="d-flex">
+          <img src="{% static 'images/create-exam.svg' %}" class="blue-logos" />
+          <span class="headings px-2">Create New Exam</span>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-sm-10 card shadow-sm p-3 pb-4 shadow mx-auto">
+        <div class="d-flex">
+          <div class="form-group mx-5">
+            <!-- <label for "exam_name" class="inter-texts headings" style="font-size:14px">Assign the exam a name (as shown inthe exam list)</label><br> -->
+            <input
+              type="text"
+              class="form-control text-input martel-texts mt-2"
+              placeholder="Exam name"
+              name="title"
+              v-model="title"
+              required
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-sm-10 card shadow-sm p-3 pb-4 shadow mx-auto">
+        <div class="d-flex">
+          <img
+            src="{% static 'images/exam-questions.svg' %}"
+            class="blue-logos mx-1"
+          />
+          <span class="headings px-2">Exam Questions</span>
+        </div>
+      </div>
+    </div>
+    <!-- start -->
+    <div class="row">
+      <div class="col-sm-10 card shadow-sm p-3 pb-4 shadow mx-auto">
+        <div class="d-flex">
+          <div class="form-group mx-5">
+            <div class="form-check mt-3">
+              <label class="form-check-label">
+                <input
+                  type="checkbox"
+                  class="form-check-input"
+                  name="nodigital"
+                  v-model="nodigital"
+                />
+                <p class="inter-texts text-18">
+                  <b>No digital exam questions</b>
+                </p>
+                <p class="text-14 martel-texts mt-1">
+                  Assign the exam a name (as shown in the exam list)
+                </p>
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- end -->
+    <!-- start -->
+    <div class="row">
+      <div class="col-sm-10 card shadow-sm p-3 pb-4 shadow mx-auto">
+        <div class="">
+          <div class="accordion" id="accordionExample">
+            <div class="accordion-item">
+              <h2 class="accordion-header" id="headingOne">
+                <button
+                  class="accordion-button"
+                  type="button"
+                  data-bs-toggle="collapse"
+                  data-bs-target="#collapseOne"
+                  aria-expanded="true"
+                  aria-controls="collapseOne"
+                >
+                  <p class="inter-texts text-18"><b>Use a PDF file</b></p>
+                </button>
+              </h2>
+              <div
+                id="collapseOne"
+                class="accordion-collapse collapse show"
+                aria-labelledby="headingOne"
+                data-bs-parent="#accordionExample"
+              >
+                <div class="accordion-body">
+                  <input
+                    type="file"
+                    accept=".doc, .docx, application/pdf"
+                    class=""
+                    @change="handleUpload"
+                    id="uploadpdf"
+                  />
+                </div>
+              </div>
+            </div>
+            <div class="accordion-item">
+              <h2 class="accordion-header" id="headingTwo">
+                <button
+                  class="accordion-button collapsed"
+                  type="button"
+                  data-bs-toggle="collapse"
+                  data-bs-target="#collapseTwo"
+                  aria-expanded="false"
+                  aria-controls="collapseTwo"
+                >
+                  <p class="inter-texts text-18"><b>Write exam questions</b></p>
+                </button>
+              </h2>
+              <div
+                id="collapseTwo"
+                class="accordion-collapse collapse"
+                aria-labelledby="headingTwo"
+                data-bs-parent="#accordionExample"
+              >
+                <div class="accordion-body">
+                  <p class="text-14 martel-texts mt-1">
+                    Write your questions here or paste from Microsoft Word
+                  </p>
+
+                  <textarea
+                    id="editor"
+                    name="editor"
+                    v-model="editor"
+                  ></textarea>
+                </div>
+              </div>
+            </div>
+          </div>
+            <div class="accordion-item">
+              <h2 class="accordion-header" id="headingThree">
+                <button
+                  class="accordion-button collapsed"
+                  type="button"
+                  data-bs-toggle="collapse"
+                  data-bs-target="#collapseThree"
+                  aria-expanded="false"
+                  aria-controls="collapseThree"
+                >
+                  <p class="inter-texts text-18"><b>Student Information</b></p>
+                </button>
+              </h2>
+              <div
+                id="collapseThree"
+                class="accordion-collapse collapse"
+                aria-labelledby="headingThree"
+                data-bs-parent="#accordionExample"
+              >
+                <div class="accordion-body">
+                  <p class="text-14 martel-texts mt-1">
+                    Select the information to be provided bythe students before taking the exam.
+                  </p>
+ <div class="form-group mx-5">
+          <input
+            type="checkbox"
+            class="form-check-input"
+            name="first_name"
+            id="first_name"
+            v-model="first_name"
+            onclick=""
+            reset="True"
+          />
+          <p class="inter-texts text-18">
+            <b>Firstname</b>
+          </p>
+        </div>
+        <div class="form-group mx-5">
+          <input
+            type="checkbox"
+            class="form-check-input"
+            name="last_name"
+            id="last_name"
+            v-model="last_name"
+          />
+          <p class="inter-texts text-18">
+            <b>Lastname</b>
+          </p>
+        </div>
+        <div class="form-group mx-5">
+          <input
+            type="checkbox"
+            class="form-check-input"
+            name="email"
+            id="email"
+            v-model="email"
+            onclick=""
+          />
+          <p class="inter-texts text-18">
+            <b>Email</b>
+          </p>
+        </div>
+        <div class="form-group mx-5">
+          <input
+            type="checkbox"
+            class="form-check-input"
+            name="student_class"
+            id="student_class"
+            v-model="student_class"
+            onclick=""
+          />
+          <p class="inter-texts text-18">
+            <b>Student Class</b>
+          </p>
+        </div> 
+        <div class="form-group mx-5">
+          <input
+            type="checkbox"
+            class="form-check-input"
+            name="teacher_name"
+            id="teacher_name"
+            v-model="teacher_name"
+            onclick=""
+          />
+          <p class="inter-texts text-18">
+            <b>Teacher Name</b>
+          </p>
+        </div>  
+        <div class="form-group mx-5">
+          <input
+            type="checkbox"
+            class="form-check-input"
+            name="student_id"
+            id="student_id"
+            v-model="student_id"
+            onclick=""
+          />
+          <p class="inter-texts text-18">
+            <b>Student ID</b>
+          </p>
+        </div> 
+<p>Tools</p>
+        <div class="form-group mx-5">
+          <input
+            type="checkbox"
+            class="form-check-input"
+            name="calc"
+            id="calc"
+            v-model="calc"
+            onclick=""
+          />
+          <p class="inter-texts text-18">
+            <b>Calculator</b>
+          </p>
+        </div>  
+        <div class="form-group mx-5">
+          <input
+            type="checkbox"
+            class="form-check-input"
+            name="desmos_calc"
+            id="desmos_calc"
+            v-model="desmos_calc"
+            onclick=""
+          />
+          <p class="inter-texts text-18">
+            <b>Desmos Calculator</b>
+          </p>
+        </div>    
+                </div>
+              </div>
+            </div>
+        </div>
+
+
+<div class="row">
+  <div class="col-sm-12">
+    <div class="col-sm-4">
+    </div>
+    <div class="col-sm-7">
+      <p class="inter-texts text-18"><b>Security Level</b></p>
+    </div>
+  </div>
+</div>
+          <div class="form-group mx-5">
+            <div class="form-check mt-3">
+              <label class="form-check-label">
+                <input
+                  type="radio"
+                  class="form-check-input"
+                  name="any_browser"
+                  v-model="any_browser"
+                />
+                <p class="inter-texts text-18">
+                  <b>Allow any browser</b>
+                </p>
+                <p class="text-14 martel-texts mt-1">
+                  
+                </p>
+              </label>
+              <p> This exam will open in any browser </p>
+            </div>
+          </div>     
+
+          <div class="form-group mx-5">
+            <div class="form-check mt-3">
+              <label class="form-check-label">
+                <input
+                  type="radio"
+                  class="form-check-input"
+                  name="require_high_security"
+                  v-model="require_high_security"
+                />
+                <p class="inter-texts text-18">
+                  <b>Require high security</b>
+                </p>
+                <p class="text-14 martel-texts mt-1">
+                  
+                </p>
+              </label>
+              <p> This exam will only be accessible using SEB(Safe Exam Browser for security purposes) </p>
+            </div>
+          </div>     
+<hr/>
+          <div class="form-group mx-5">
+            <div class="form-check mt-3">
+              <label class="form-check-label">
+                <input
+                  type="radio"
+                  class="form-check-input"
+                  name="anonymous_exam"
+                  v-model="anonymous_exam"
+                />
+                <p class="inter-texts text-18">
+                  <b>Anonymous</b>
+                </p>
+                <p class="text-14 martel-texts mt-1">
+                  
+                </p>
+              </label>
+              <p></p>
+            </div>
+          </div>
+      </div>
+    </div>
+    <!-- end -->
+
+
+    <!-- start -->
+    <div class="row">
+      <div class="col-sm-3 card shadow-sm p-2 pl-5 shadow mx-auto">
+        <div class="d-flex">
+          <div class="form-group mx-5">
+            <input type="submit" value="Submit" class="btn btn-danger btn-lg" />
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- end -->
+  </form>
+  {% comment %} <button @click="displayContent">show content</button> {% endcomment %}
+</div>
+
+<script type="text/javascript">
+  var app = new Vue({
+    el: "#container",
+    delimiters: ["${", "}"],
+    data: {
+      title: "",
+      nodigital: "",
+      editor: "",
+      uploadpdf: null,
+      first_name: "",
+      last_name: "",
+      email: "",
+      student_class: "",
+      teacher_name: "",
+      student_id: "",
+      calc: "",
+      desmos_calc: "",
+      any_browser: "",
+      require_high_security: "",
+      anonymous_exam: "",
+    },
+
+    methods: {
+      handleUpload(event) {
+        this.uploadpdf = event.target.files[0];
+      },
+
+      displayContent() {
+        alert(tinymce.get("editor").getContent());
+      },
+
+      submit() {
+        let form_data = new FormData();
+        form_data.append("title", this.title);
+        form_data.append("nodigital", this.nodigital);
+        form_data.append("editor", tinymce.get("editor").getContent());
+        if (this.uploadpdf !== null) {
+          form_data.append("uploadpdf", this.uploadpdf, this.uploadpdf.name);
+        }
+        form_data.append("first_name", this.first_name);
+        form_data.append("last_name", this.last_name);
+        form_data.append("email", this.email);
+        form_data.append("student_class", this.student_class);
+        form_data.append("teacher_name", this.teacher_name);
+        form_data.append("student_id", this.student_id);
+        form_data.append("calc", this.calc);
+        form_data.append("desmos_calc", this.desmos_calc);
+        form_data.append("any_browser", this.any_browser);
+        form_data.append("require_high_security", this.require_high_security);
+        form_data.append("anonymous_exam", this.anonymous_exam);
+
+        axios
+          .post("/create-exam", form_data)
+          //.then((res) => console.log(res.data))
+          .then((res) => window.location.assign("/"))
+          .catch((errors) => console.log(errors));
+      },
+    },
+  });
+</script>
+
+{% endblock content %}

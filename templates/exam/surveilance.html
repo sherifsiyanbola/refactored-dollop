@@ -1,0 +1,21 @@
+{% extends 'includes/base.html' %} {% load static %} {% block title %} Student
+Exam {% endblock title %} {% block content %} <br /><br /><br /><br />
+<div class="container">
+  {% for each_exam in exams %}
+  <div class="row">
+    <div class="col-sm-2"></div>
+    <div class="col-8">
+      <div class="card">
+        <div class="card-body">
+          <a href="{% url 'surveilance_detail' each_exam.id %}" class="card-title"
+            >{{ each_exam.title }}<span class="badge badge-secondary"
+              >{{ each_exam.exam_key }}</span
+            >
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% endblock content %}

@@ -1,0 +1,18 @@
+{% extends 'includes/base.html' %}
+
+{% block title %}
+Index
+{% endblock title %}
+
+{% block content %}
+
+<div class="row mt-5">
+<a href="{% url 'login' %}">Login</a>
+<a href="{% url 'signup' %}">signup</a>
+<a href="{% url 'create_exam' %}">Create Exam</a>
+<a href="{% url 'exam_list' %}">Exam List</a>
+<a href="{% url 'monitor_exam' %}">Monitor Exam</a>
+<a href="{% url 'monitor_student' %}">Monitor Student</a>
+<a href="{% url 'student_workpace' %}">Student Workspace</a>
+</div>
+{% endblock content %}

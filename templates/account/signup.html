@@ -1,0 +1,77 @@
+{% extends 'includes/base.html' %}
+{% load static %}
+
+{% load i18n %}
+
+{% load crispy_forms_filters %}
+
+{% block head_title %}{% trans "Signup" %}{% endblock %}
+{% block title %}
+signup
+{% endblock title %}
+
+
+{% block navbar %}
+{% include 'includes/navbar.html' %}
+{% endblock navbar %}
+
+
+{% block content %}
+
+<div class="text-center">
+    <h1>{% trans "Sign Up" %}</h1>
+
+    <p>{% blocktrans %}Already have an account? Then please <a href="{{ login_url }}">sign in</a>.{% endblocktrans %}</p>
+</div>
+<div class="row">
+    <div class="col-md-6 offset-md-3">
+        <form class="signup" id="signup_form" method="post" action="{% url 'account_signup' %}">
+        {% csrf_token %}
+        {{ form|crispy }}
+        {% if redirect_field_value %}
+        <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+        {% endif %}
+        <div class="d-grid mt-3">
+            <button class="btn btn-dark" type="submit">{% trans "Sign Up" %}</button>
+        </div>
+        </form>
+    </div>
+</div>
+
+
+         
+
+
+       <!-- line and or-->
+       <div class=" text-center mt-3" >
+       
+          <!-- line and or-->
+          <div class="  d-flex justify-content-center  " >
+                <hr class="mr-0" style="width:200px;">
+                <span class="blue-texts mx-2" style=" line-height:30px">
+                <b>OR</b>
+                </span><hr class="ml-0" style="width:200px">
+                  </div>
+
+           <!--Social media icons-->
+           <div class="container mt-4 ">
+            <span class="btn btn-white social-box text-center blue-texts ">
+                <img src="{% static 'images/google.svg' %}" style="width: 30px; height: 30px">
+                <b><a href="/accounts/google/login">Sign up with Google</a></b>
+            </span>
+
+            <span class=" btn btn-white social-box text-center blue-texts ">
+                <img src="{% static 'images/microsoft.svg' %}" style="width: 30px; height: 30px">
+                <b><a href="/accounts/microsoft/login">Sign up with Microsoft</a></b>
+            </span>
+
+        </div>
+
+         
+           
+           </div>
+
+    </div>
+  </div>
+
+{% endblock content %}

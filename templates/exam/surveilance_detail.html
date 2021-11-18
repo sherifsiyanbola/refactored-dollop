@@ -1,0 +1,150 @@
+{% extends 'includes/base.html' %} {% load static %} {% block title %} Student
+Exam {% endblock title %} {% block content %}
+<script>
+    window.setInterval('refresh()', 10000); 	// Call a function every 10000 milliseconds (OR 10 seconds).
+
+    // Refresh or reload page.
+    function refresh() {
+        window .location.reload();
+    }
+</script>
+<!-- <div class="container">
+  <br /><br /><br />
+  <div class="row">
+    <div class="col-sm-4">
+      <div class="card">
+        <div class="card-body">
+          <a href="#" class="card-title"
+            >{{ exam.title }}
+            <span class="badge badge-secondary">{{ exam.exam_key }}</span>
+          </a>
+          <h3 class="mt-3">Students</h3>
+          {% for each_student in all_answers %}
+            {% if each_student.started_exam == True %}
+              <p class="card-text">{{ each_student.firstname }} {{ each_student.lastname }} {% if each_student.submitted == True %}<img src="{% static 'images/checked.svg' %}" width="20px" height="20px">{% endif %} </p>
+            {% endif %}
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+    <div class="col-sm-2">
+      <div class="card">
+        <div class="card-body">
+          <h1 class="mt-3">{{started_exam}}</h1>
+          <p class="card-text">Started the exam</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-sm-2">
+      <div class="card">
+        <div class="card-body">
+          <h1 class="mt-3">{{answer}}</h1>
+          <p class="card-text">Submitted the exam</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-sm-2">
+      <div class="card">
+        <div class="card-body">
+          <h1 class="mt-3">{{ongoing_exam}}</h1>
+          <p class="card-text">Ongoing</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% comment %} second row {% endcomment %}
+  <div class="row">
+    <div class="col-sm-4"></div>
+    <div class="col-sm-2">
+      <div class="card">
+        <div class="card-body">
+          <a href="{% url 'see_answer' exam.id %}"><h5 class="mt-3">View Answers</h5></a>
+        </div>
+      </div>
+    </div>
+  </div>
+ -->
+
+  <!-- start -->
+  <br /><br /><br /> <br /><br />
+<div class="container">
+  <div class="row">
+    <div class="col-9">
+      <a href="#" class="card-title"
+      >{{ exam.title }}
+      <span class="badge badge-secondary">{{ exam.exam_key }}</span>
+    </a>
+    <h3 class="mt-3">Students</h3>
+    </div>
+    <div class="col-4 card">
+    {% for each_student in all_answers %}
+      {% if each_student.started_exam == True %}
+        {% if each_student.first_name %} <a href="{% url 'student_answer' each_student.id %}"><p class="card-text">{{ each_student.first_name }} {{ each_student.last_name }} {% if each_student.submitted == True %}<img src="{% static 'images/tick.svg' %}" width="20px" height="20px">{% endif %} </p></a>
+        {% elif each_student.student_id %} <a href="{% url 'student_answer' each_student.id %}"><p class="card-text">{{ each_student.student_id }} {% if each_student.submitted == True %}<img src="{% static 'images/tick.svg' %}" width="20px" height="20px">{% endif %} </p></a>
+        {% else %}
+        <a href="#">name</a>
+        {% endif %}
+      {% endif %}
+    {% endfor %}
+    </div>
+    <div class="col-6 card">
+      <div class="row">
+        <div class="col-4">
+          <div class="card">
+            <div class="card-body">
+              <h1 class="mt-3">{{started_exam}}</h1>
+              <p class="card-text">Started the exam</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-4">
+          <div class="card">
+            <div class="card-body">
+              <h1 class="mt-3">{{answer}}</h1>
+              <p class="card-text">Submitted the exam</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-4">
+          <div class="card">
+            <div class="card-body">
+              <h1 class="mt-3">{{ongoing_exam}}</h1>
+              <p class="card-text">Ongoing</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-4">
+          <div class="card">
+            <div class="card-body">
+              <a href="{% url 'see_answer' exam.id %}"><h6 class="mt-3">View Answers</h6></a>
+            </div>
+          </div>
+        </div>
+        <div class="col-4">
+          <div class="card">
+            <div class="card-body">
+
+              <a href="{% url 'force_submit' exam.id %}"><h6 class="mt-3">Force Submit</h6></a>
+            </div>
+          </div>
+        </div>
+        {% comment %} <div class="col-4">
+          <div class="card">
+            <div class="card-body">
+              <a href="{% url 'see_answer' exam.id %}"><img src="{% static 'images/file.svg' %}" width="70px" height="70px"><h6 class="mt-3">Force submission for students</h6></a>
+            </div>
+          </div>
+        </div> {% endcomment %}
+        <div class="col-4">
+          
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- end -->
+  {% endblock content %}
+</div>
+</div>

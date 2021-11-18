@@ -1,0 +1,132 @@
+{% extends 'includes/base.html' %}
+{% load static %}
+{% block title %}
+signup
+{% endblock title %}
+
+
+{% block navbar %}
+{% endblock navbar %}
+
+
+{% block content %}
+
+<div class="row">
+
+    <div class=" col-sm-7 card signup-section shadow-sm  mx-auto pb-4" >
+        
+       
+         <div class=" text-center mt-5" >
+            <p class="text-18" > <b>Create an account to get started</b></p>
+         </div>
+
+
+
+          <!--Input area-->
+          <form class="container mt-4" method="post">
+          {% csrf_token %}
+
+
+
+    {% if form.errors %}
+	<!-- Error messaging -->
+	<div id="errors" class="alert alert-danger">
+		<div class="inner">
+			<p>There were some errors in the information you entered. Please correct the following:</p>
+			<ul>
+				{% for field in form %}
+					{% if field.errors %}<li>{{ field.label }}: {{ field.errors|striptags }}</li>{% endif %}
+				{% endfor %}
+			</ul>
+		</div>
+	</div>
+	<!-- /Error messaging -->
+{% endif %}
+
+
+                    <!--_________________________________________________________________________-->
+                   <div class="row">
+                       <div class="col-sm-6">
+                         <label for="id_first_name" class="inter-texts blue-texts"><b> First name</b></label>
+                          <input type="text" name="first_name" class="form-control text-input mt-2" id="id_first_name"  placeholder="Adamu"  required>
+                       </div>
+            
+                     <div class="col-sm-6">
+                        <label for="id_last_name" class="inter-texts blue-texts"><b> Last name</b></label>
+                        <input type="text" name="last_name" class="form-control text-input mt-2" id="id_last_name"  placeholder="Garba"  required>
+                     </div>
+             
+                   </div>
+                   <!--_________________________________________________________________________-->
+            
+            
+                   
+                   <label for="id_email" class="inter-texts blue-texts mt-3"><b> Email</b></label><br>
+                   <input type="email" name="email" class="form-control text-input mt-2" id="id_email"  placeholder="example@email.com" required>
+                  
+          
+                     <!--_________________________________________________________________________-->
+                     <div class="row mt-4" >
+                           <div class="col-sm-6">
+                                <label for="id_password1" class="inter-texts blue-texts"><b> Enter password</b></label>
+                                <input type="password" name="password1" class="form-control text-input mt-2" id="id_password1"  placeholder="********"  required>
+                           </div>
+            
+                           <div class="col-sm-6">
+                            <label for "id_password2" class="inter-texts blue-texts"><b> Confirm password</b></label>
+                            <input type="password" name="password2" class="form-control text-input mt-2" id="id_password2"  placeholder="********"  required>
+                           </div>
+                 
+                     </div>
+                       <!--_________________________________________________________________________-->
+                       <div class="form-check mt-3">
+                        <input type="checkbox"   class="form-check-input" id="tnc_checkbox" required> 
+                        <div class="text-secondary  ml-1 "><p class="martel-texts">by clicking here you agree to our <u>terms</u> and <u>regulation</u></p></div>
+                        </div>
+            
+                <div class="mt-4 mt-2"   >
+                    <input type="submit" class="btn red-btn btn-lg inter-texts text-14 text-light" value="Next">
+             
+                </div>
+            </div>
+           
+      </form>
+
+
+
+         
+
+
+       <!-- line and or-->
+       <div class=" text-center mt-3" >
+       
+          <!-- line and or-->
+          <div class="  d-flex justify-content-center  " >
+                <hr class="mr-0" style="width:200px;">
+                <span class="blue-texts mx-2" style=" line-height:30px">
+                <b>OR</b>
+                </span><hr class="ml-0" style="width:200px">
+                  </div>
+
+           <!--Social media icons-->
+           <div class="container mt-4 " >
+               <span class="btn btn-white social-box text-center blue-texts " >
+                   <img src="{% static 'images/google.svg' %}" style="width: 30px; height: 30px">
+                   <b>sign up with Google</b>
+               </span>
+             
+               <span class=" btn btn-white social-box text-center blue-texts " >
+                    <img src="{% static 'images/microsoft.svg' %}" style="width: 30px; height: 30px">   
+                <b>sign up with Microsoft</b>
+               </span>
+             
+           </div>
+
+         
+           
+           </div>
+
+    </div>
+  </div>
+
+{% endblock content %}

@@ -1,0 +1,24 @@
+{
+  "name": "lincoln_exam-master",
+  "version": "1.0.0",
+  "description": "pip install -r requirements.txt",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sherifsiyanbola/lincoln_exam.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/sherifsiyanbola/lincoln_exam/issues"
+  },
+  "homepage": "https://github.com/sherifsiyanbola/lincoln_exam#readme",
+  "dependencies": {
+    "fs": "0.0.1-security",
+    "googleapis": "^84.0.0",
+    "path": "^0.12.7"
+  }
+}

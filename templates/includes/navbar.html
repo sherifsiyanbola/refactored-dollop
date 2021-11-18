@@ -1,0 +1,48 @@
+{% load static %}
+<div class="nav-div">
+    <nav class="navbar navbar-expand-sm fixed-top">
+
+        <ul class="navbar-nav px-4">
+            <li class="nav-item">
+                <span class="inter-texts nav-logo">
+                    {% comment %} <!-- <b>ExamPortal</b> -->
+                    <a href="/">
+                    <img src="{% static 'img/lincoln.png' %}" style="width: 100px; height: 50px">
+                    </a> {% endcomment %}
+                    Exam Portal
+                </span>
+            </li>
+        </ul>
+{% if request.user.is_authenticated %}
+        <div class="container-fluid">
+            <a class="navbar-brand"></a>
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                  <a class="nav-link active text-white" aria-current="page" href="/">Home</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link text-white" href="{% url 'create_exam' %}">New exam</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white" href="{% url 'monitor_exam' %}">Exam list</a>
+                  </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white" href="{% url 'surveilance' %}">Surveilance</a>
+                  </li>
+                  {% comment %} <li class="nav-item">
+                    <a class="nav-link text-white" href="#">Profile</a>
+                  </li> {% endcomment %}
+                  <li class="nav-item">
+                    <a class="nav-link text-white" href="{% url 'account_logout' %}">Sign out</a>
+                  </li>
+                  {% comment %} <li class="nav-item">
+                    <a class="nav-link text-white" href="#">Support</a>
+                  </li> {% endcomment %}
+            </ul>
+          </div> 
+{% else %}
+{% endif %}
+
+    </nav>
+
+</div>

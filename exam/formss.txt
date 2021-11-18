@@ -1,0 +1,26 @@
+from django import forms 
+from .models import Exam
+
+class ExamForm(forms.ModelForm):
+    options = forms.MultipleChoiceField(choices = (
+        ('First Name', 'First Name'),
+        ('Last Name', 'Last Name'),
+        ('Email', 'Email'),
+        ('Class', 'Class'),
+        ('Teacher Name', 'Teacher Name'),
+        ('Phone Number', 'Phone Number'),
+        ('Student Id', 'Student Id'),
+        ('Anonymise Exam', 'Anonymise Exam'),
+        ('Spell Check', 'Spell Check'),
+        ('Handwritten Solution', 'Handwritten Solution'),
+        ('Drawing Tool', 'Drawing Tool'),
+        ('Formula Editor', 'Formula Editor'),
+        ('Calculator', 'Calculator'),
+        ('Desmos', 'Desmos'),
+        ('Programming', 'Programming'),
+        ('Mathematical Formulas', 'Mathematical Formulas')
+    ), widget=forms.CheckboxSelectMultiple, required=False)
+    
+    class Meta:
+        model = Exam 
+        fields = '__all__'

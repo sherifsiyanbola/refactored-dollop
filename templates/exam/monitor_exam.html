@@ -1,0 +1,80 @@
+{% extends 'includes/base.html' %}
+{% load static %}
+{% block title %}
+Student Exam
+{% endblock title %}
+<script>
+var copy = document.querySelectorAll(".copy"); 
+
+for (const copied of copy) { 
+  copied.onclick = function() { 
+    document.execCommand("copy"); 
+  };  
+  copied.addEventListener("copy", function(event) { 
+    event.preventDefault(); 
+    if (event.clipboardData) { 
+      event.clipboardData.setData("text/plain", copied.textContent);
+      console.log(event.clipboardData.getData("text"))
+    };
+  });
+};
+</script>
+
+<style>
+.copy {
+            
+  cursor: copy;
+            
+}
+</style>
+{% block content %}
+<!--content goes here-->
+<div class="header">
+    Exam Portal
+</div>
+  <div class="card text-left exam-monitor">
+    <img class="card-img-top" src="holder.js/100px180/" alt="">
+    <div class="card-body d-flex justify-content-md-between">
+      <h5 class="card-title fw-bold">My Exams</h5>
+      <p class="card-text text-decoration-underline"></p>
+    </div>
+    <div class="card-body">
+      <table class="table table-responsive-lg">
+        <tbody>
+          <tr class="fw-bold">
+            <th>Exam name</th>
+            <th>Exam key</th>
+            <th>Created</th>
+            <th>Exam Status</th>
+            {% comment %} <th>Options</th> {% endcomment %}
+          </tr>
+          {% for exam in exams %}
+          <tr class="table-light">
+            <td>{{exam.title}}</td>
+            {% comment %} <td style="border-radius: 5%; border:#333;" class="text-secondary text-18"><span class="copy"><strong>{{exam.exam_key}}</strong></span></td> {% endcomment %}
+            <td><button class="btn btn-info btn-sm"> <strong>{{exam.exam_key}}</strong> </button></td>
+            <td>{{exam.timestamp}}</td>
+            <td>
+              
+                {% comment %} <button class="btn btn-primary">{% if exam.exam_open == False %} Closed {% else %} Open {% endif %}</button> {% endcomment %}
+                {% if exam.exam_open == False %}
+                <button class="btn btn-danger btn-sm"> Closed</button>
+                {% else %}
+                <button class="btn btn-success btn-sm exam-open"> Open</button>
+                {% endif %}
+              
+            </td>
+            
+            <td><a href="{% url 'exam_detail' exam.id %}" class = "btn btn-info btn-sm">View</a></td>
+            <td><a href="{% url 'edit_exam' exam.id %}" class = "btn btn-secondary btn-sm">Status</a></td>
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+      <a href="{% url 'create_exam' %}" class="btn btn-danger">New Exam</a>
+    </div>
+  </div>
+  <div style="margin-left: 40%;">
+    <P style="color: #0e3746; text-decoration: underline;">Create new exam group</P>
+  </div>
+  {% endblock content %} 

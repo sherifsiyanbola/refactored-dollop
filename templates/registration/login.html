@@ -1,0 +1,204 @@
+{% extends 'includes/base.html' %} {% load static %} {% block title %} login {% endblock title %} {% block content %}
+
+<!--Content goes here-->
+
+
+<div class="row">
+    <div class="col-sm-7 card shadow   mx-auto signup-section p-0 pb-4">
+        <nav>
+            <div class="nav nav-tabs row px-0 mx-0  " id="nav-tab" role="tablist">
+                <button class="nav-link col-6 px-0 text-20 text-center navtab" id="nav-home-tab" data-bs-toggle="tab" data-bs-target="#nav-home" type="button" role="tab" aria-controls="nav-home" aria-selected="true">Student</button>
+                <button class="nav-link active col-6 px-0 text-20 text-center navtab" id="nav-profile-tab" data-bs-toggle="tab" data-bs-target="#nav-profile" type="button" role="tab" aria-controls="nav-profile" aria-selected="false">Teacher</button>
+            </div>
+        </nav>
+
+        <div class="tab-content px-0 border-top" id="nav-tabContent">
+            <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
+                <div id="student_form" class="container ">
+                    <form action="">
+                        <div class="form-group mt-4">
+                            <!--INPUT-->
+                            <label for="exam_key" class="inter-texts blue-texts">
+                                <b>Exam key</b>
+                            </label>
+                            <br>
+                            <input type="text" class="form-control text-input" id="exam_key" placeholder="Enter exam key" name="exam_key">
+                            <!--END OF INPUT-->
+                            <div class="collapse" id="content">
+                                <!--INPUT-->
+                                <label for="student_fname" class="inter-texts blue-texts mt-2">
+                                    <b>First name</b>
+                                </label>
+                                <br>
+                                <input type="text" class="form-control text-input" id="student_fname" placeholder="Adamu" name="student_fname">
+                                <!--END OF INPUT-->
+                                <!--INPUT-->
+                                <label for="student_lname" class="inter-texts blue-texts mt-2">
+                                    <b>Last name</b>
+                                </label>
+                                <br>
+                                <input type="text" class="form-control text-input" id="student_lname" placeholder="Garba" name="student_lname">
+                                <!--END OF INPUT-->
+
+                                <!--INPUT-->
+                                <label for="student_ID" class="inter-texts blue-texts mt-2">
+                                    <b>Student ID</b>
+                                </label>
+                                <br>
+                                <input type="text" class="form-control text-input" id="student_ID" placeholder="Enter student ID" name="student_ID">
+
+                                <button id="student_submit" type="submit" class="btn btn-lg red-btn inter-texts mt-4 mb-0 text-14 text-light">Fetch
+                                    exam</button>
+
+                                <!--END OF INPUT-->
+                            </div>
+
+                            <button id="student_show" type="button" class="btn btn-lg red-btn inter-texts mt-4 mb-0 text-14 text-light" data-bs-toggle="collapse" data-bs-target="#content">Next</button>
+
+                        </div>
+                    </form>
+                </div>
+
+            </div>
+
+
+
+            <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
+                <div id="teacher_form" class="container  ">
+
+
+
+                    <div class=" text-center mt-5  ">
+                        <p class="blue-texts">
+                            <b>Welcome, please sign in to use your account</b>
+                        </p>
+
+                        <!--Social media icons-->
+                        <div class="container mt-4 ">
+                            <span class="btn btn-white social-box text-center blue-texts ">
+                                <img src="{% static 'images/google.svg' %}" style="width: 30px; height: 30px">
+                                <b>sign up with Google</b>
+                            </span>
+
+                            <span class=" btn btn-white social-box text-center blue-texts ">
+                                <img src="{% static 'images/microsoft.svg' %}" style="width: 30px; height: 30px">
+                                <b>sign up with Microsoft</b>
+                            </span>
+
+                        </div>
+
+
+                        <div class="  d-flex justify-content-center mt-4 ">
+                            <hr class="mr-0" style="width:200px;">
+                            <span class="blue-texts mx-2" style=" line-height:30px">
+                                <b>OR</b>
+                            </span>
+                            <hr class="ml-0" style="width:200px">
+                        </div>
+
+
+                    </div>
+
+                    <form method="POST" ction="{% url 'account_login' %}">
+                        {% csrf_token %} {% if form.errors %}
+                        <!-- Error messaging -->
+                        <div id="errors" class="alert alert-danger">
+                            <div class="inner">
+                                <p>Email or password incorrect</p>
+                            </div>
+                        </div>
+                        <!-- /Error messaging -->
+                        {% endif %}
+
+
+                        <div class="form-group mt-4 px-2">
+
+                            <label for "email" class="inter-texts blue-texts p-0">
+                                <b> Enter email</b>
+                            </label>
+                            <br>
+                            <input type="email" name="login" class="form-control text-input mt-2" id="id_login" placeholder="example@email.com" name="email">
+
+
+
+                            <label for "pwd" class="inter-texts blue-texts mt-3">
+                                <b> Enter password</b>
+                            </label>
+                            <br>
+                            <input type="password" name="password" class="form-control text-input mt-2 " id="id_password" placeholder="********" name="password"><br>
+                            <!-- <a class="text-warning mt-5 text-decoration-none">forgot password?</a> -->
+                            <a href="{% url 'password_reset' %}" class="text-warning text-decoration-none"><b>forgot password?</b></a>
+                            <div class="mt-4  mx-1 d-flex" style=" justify-content: space-between">
+                                <input type="submit" class=" btn red-btn btn-lg inter-texts mb-0 text-14 text-light">
+                                <span>
+                                    <a href="{% url 'signup' %}">
+                                        <p class="blue-texts float-right  " style="display:inline;  ">
+                                            <b>Not yet registered?
+                                                <span class="text-danger">
+                                                    <u> Create an account</u>
+                                                </span>
+                                </b>
+                                </p>
+                                </a>
+                                </span>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        <!--end of div of all items-->
+    </div>
+</div>
+<script>
+    var navptab = document.getElementById('nav-profile-tab');
+    var navhtab = document.getElementById('nav-home-tab');
+
+
+
+
+
+    document.getElementById('nav-home-tab').onclick = function() {
+        this.style.background = "#0E3746";
+        this.style.color = "white";
+        navptab.style.background = "#ffffff";
+        navptab.style.color = "gray";
+
+    }
+
+    document.getElementById('nav-profile-tab').onclick = function() {
+        this.style.background = "#0E3746";
+        this.style.color = "white";
+        navhtab.style.background = "#ffffff";
+        navhtab.style.color = "gray";
+
+    }
+
+    document.getElementById('student_show').onclick = function() {
+        this.style.display = 'none';
+
+
+    }
+</script>
+
+
+
+{% endblock content %}

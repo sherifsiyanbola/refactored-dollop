@@ -1,0 +1,139 @@
+{% extends 'includes/base.html' %} {% load static %} {% block title %} Student
+Exam {% endblock title %} {% block content %}
+<script src="https://apis.google.com/js/platform.js" async defer></script>
+<script type="text/javascript">
+    function Export2Doc(element, filename = ''){
+        var html = "<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'><head><meta charset='utf-8'><title>Export HTML To Doc</title></head><body>";
+        var footer = "</body></html>";
+        var html = html+document.getElementById(element).innerHTML+footer;
+    
+        
+        //link url
+        var url = 'data:application/vnd.ms-word;charset=utf-8,' + encodeURIComponent(html);
+        
+        //file name
+        filename = filename?filename+'.doc':'document.doc';
+        
+        // Creates the  download link element dynamically
+        var downloadLink = document.createElement("a");
+    
+        document.body.appendChild(downloadLink);
+        
+        //Link to the file
+        downloadLink.href = url;
+            
+        //Setting up file name
+        downloadLink.download = filename;
+            
+        //triggering the function
+        downloadLink.click();
+        //Remove the a tag after donwload starts.
+        document.body.removeChild(downloadLink);
+    }
+
+</script>
+<style>
+.answer-area {
+    height:1600px;
+}
+
+</style>
+
+<div class="container">
+<br><br><br><br><br><br>
+<div class="row">
+<div class="col-sm-4">
+</div>
+<div class="col-sm-8 d-print-none">
+
+{% comment %} <button id="btn-export" class="btn btn-warning btn-sm" onclick="exportHTML();"><img src="{% static 'images/google-drive.svg' %}" width="20px" height="20px">Save to Google Drive</button> {% endcomment %}
+{% comment %} 
+<div class="g-savetodrive"
+   data-src="//localhost:8000/see-answers/"
+   data-filename="http://localhost:8000/see-answers/"
+   data-sitename="My Company Name">
+</div> {% endcomment %}
+
+</div>
+</div>
+<div class="col-sm-2">
+</div>
+</div>
+<div class="row">
+    <div class="col-sm-3"></div>
+    <div class="col-sm-3 text-white"> <button class="btn btn-danger btn-sm" onclick="window.print();"><img src="{% static 'images/pdf.svg' %}" width="20px" height="20px"> Download PDF</button> </div><div class="col-sm-1"></div>
+    <div class="col-sm-3 text-white"> <button class="btn btn-info btn-sm" onclick="Export2Doc('content-to-pdf');"><img src="{% static 'images/doc.svg' %}" width="20px" height="20px">Download Word-Files</button> </div>
+</div>
+<br>
+<div class="row">
+    <div class="col-sm-3"></div>
+    <div class="col-sm-3 text-white"> <button class="btn btn-outline-success"> {% if student_answer.submitted == True %}The exam was Submitted {% else %}The exam was not Submitted {% endif %}</button> </div><div class="col-sm-1"></div>
+    <div class="col-sm-3 text-white"> <button class="btn btn-outline-success">{% if student_answer.started_exam == True %}The exam was loaded {% else %}The exam was not loaded {% endif %}</button> </div>
+</div>
+<br>
+<div class="row">
+    <div class="col-sm-3"></div>
+    <div class="col-sm-4"> <b>{{ client_ip }}</b><br> <em>IP Address</em> </div>
+    <div class="col-sm-3"> 
+    <b>
+    {% if 'Linux' in user_agent %}
+        Linux
+    {% elif 'Windows' in user_agent %}
+        Windows
+    {% elif 'Android' in user_agent %}
+        Android
+    {% else %}
+        Device not detected
+    {% endif %}
+    </b>
+     <br><em>Device type</em> </div>
+</div>
+</div>
+<div class="container">
+  <br /><br /><br />
+  <div class="row">
+    {% comment %} <div class="col-sm-2">
+    </div> {% endcomment %}
+    <div class="col-sm-12">
+        {% comment %} card start {% endcomment %}
+      <div class="card" id="content-to-pdf">
+      {% comment %} {% for answer in answers %} {% endcomment %}
+        <div class="card-body answer-area">
+          <div class="row">
+            <div class="col-sm-8">
+                {% comment %} <b><h4 class="cars-title">{{ student_answer.exam }}</h4></b> {% endcomment %}
+            </div>
+          </div>
+            {% comment %} <div class="row">
+                <div class="col-sm-4"><b>Firstname:</b> {{ student_answer.first_name }}</div>
+                <div class="col-sm-4"><b>Lastname:</b> {{ student_answer.last_name }}</div>
+                <div class="col-sm-4"><b>Email:</b> {{ student_answer.email }}</div>
+                <div class="col-sm-4"><b>Class:</b> {{ student_answer.student_class }}</div>
+                <div class="col-sm-4"><b>Teacher Name:</b> {{ student_answer.teacher_name }}</div>
+                <div class="col-sm-4"><b>Student ID:</b> {{ student_answer.student_id }}</div>
+            </div> {% endcomment %}
+            <div class="row">
+            {% if student_answer.exam.anonymous_exam == True and student_answer.reveal_details == False %}
+            <div class="col-sm-10 col-md-offset-2"><h2>{{student_answer.student_secrete_key}}</h2></div>
+            {% else %}
+                <div class="col-sm-10 col-md-offset-2"><h2>{{ student_answer.student_id }} {{ student_answer.first_name }} {{ student_answer.last_name }}</h2></div>
+                <div class="col-sm-10 col-md-offset-2"><b>Teacher: {{ student_answer.teacher_name }}</b></div>
+                <br>
+                <div class="col-sm-10 col-md-offset-2"><b>{{ student_answer.exam }}</b></div>
+            {% endif %}
+
+                
+            </div>
+            
+            <br><br>
+          {% comment %} <center><h3><b>Answer:</b></h3></center> {% endcomment %}
+          <p class="card-text">{{ student_answer.answer_area | safe }}</p>
+          <hr>
+        </div>
+        {% comment %} {% endfor %} {% endcomment %}
+      </div>
+    </div>
+    {% comment %} card end {% endcomment %}
+  </div>
+</div>
+{% endblock content %}

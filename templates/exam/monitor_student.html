@@ -1,0 +1,227 @@
+{% extends 'includes/base.html' %}
+{% load static %}
+{% block title %}
+Student Exam
+{% endblock title %}
+
+
+{% block content %}
+<!--content goes here-->
+<div class="header">
+    Exam Portal
+  </div>
+    <div class="card shadow sw-settings">
+        <img class="card-img-top" src="holder.js/100x180/" alt="">
+        <div class="card-body">
+            <h4 class="card-title sw-settings-header"><i class="fa fa-address-card pd-4" aria-hidden="true"></i>Student workspace</h4>
+            <hr>
+            <p class="card-text-header">Writing area</p>
+            <!--Toggle 1-->
+              <label class="switch">
+                <input type="checkbox">
+                <span class="slider round"></span>
+              </label>
+               <!--end Toggle 1-->
+              <p class="card-description">The student would be given an area to work with</p>
+              <br>
+              <p class="card-text-header">Spell check</p>
+              <!--language select-->
+              <div class="btn-group">
+                <button class="btn btn-secondary btn-lg sw-spellcheck-menu" type="button">
+                  Select language
+                </button>
+                <button type="button" class="btn btn-lg btn-secondary dropdown-toggle dropdown-toggle-split sw-spellcheck-menu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  <span class="sr-only">Toggle Dropdown</span>
+                </button>
+                <div class="dropdown-menu">
+                  <a class="dropdown-item" href="#">Hausa</a>
+                  <a class="dropdown-item" href="#">Igbo</a>
+                  <a class="dropdown-item" href="#">Yoruba</a>
+                    <div class="dropdown-divider"></div>
+                      <a class="dropdown-item" href="#">English</a>
+                </div>
+              </div>
+              <!--end of language select-->
+              <p class="card-description">Checks the spelling and gives suggestion to misspelling words</p>
+              <!--Toggle 2-->
+              <label class="switch">
+                <input type="checkbox">
+                <span class="slider round"></span>
+              </label>
+              <!--End Toggle 2-->
+              <p class="card-description">Lorem Ipsum is simply dummy text of the printing and typesetting industry.
+                 Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, 
+                 when an unknown printer took a galley of type and scrambled it to make a type specimen book.
+              </p>
+                 <!--Exam Menu Tool-->
+              <div id="accordianId" role="tablist" aria-multiselectable="true">
+               <!--Accessibility Tool-->
+                <div class="card">
+                  <div class="card-header" role="tab" id="section1HeaderId">
+                    <h5 class="mb-0">
+                      <a data-toggle="collapse" data-parent="#accordianId" href="#section1ContentId" aria-expanded="true" aria-controls="section1ContentId"><img src="/images/tool.svg">
+                        Accessibility tools
+                      </a>
+                    </h5>
+                  </div>
+                  <div id="section1ContentId" class="collapse in" role="tabpanel" aria-labelledby="section1HeaderId">
+                    <div class="card-body">
+                      <h5>Allow translation help</h5>
+                      <label class="switch">
+                        <input type="checkbox">
+                        <span class="slider round"></span>
+                      </label>
+                      <p>Give the student access to translartion help for sentences or single words, in many cases</p>
+                      <h5>English synonyms</h5>
+                      <label class="switch">
+                        <input type="checkbox">
+                        <span class="slider round"></span>
+                      </label>
+                      <p>Enable student to get synonyms for english words</p>
+                      <h5>Speech synthesis</h5>
+                      <label class="switch">
+                        <input type="checkbox">
+                        <span class="slider round"></span>
+                      </label>
+                      <p>Gives option to read aloud text which is part of the exam or text that the student produces. Note<br>
+                        that the image and pdf-files can't be read but only material which is provided as text</p>
+                        <p>This activates the function for all students. You may also activate it individually during exam suvellance exam</p>
+                        <h4>Speech Synthesis</h4>
+                        <button class="btn btn-danger" type="button">Add PDF document</button>
+                    </div>
+                  </div>
+                </div>
+                 <!--Audio-->
+                <div class="card">
+                  <div class="card-header" role="tab" id="section2HeaderId">
+                    <h4 class="mb-0">
+                      <a data-toggle="collapse" data-parent="#accordianId" href="#section2ContentId" aria-expanded="true" aria-controls="section2ContentId"><img src="/images/Audio.svg">
+                        Audio
+                      </a>
+                    </h4>
+                  </div>
+                  <div id="section2ContentId" class="collapse in" role="tabpanel" aria-labelledby="section2HeaderId">
+                    <div class="card-body sw-Audio">
+                      <div class="d-flex justify-content-lg-between sw-Audio">
+                        <h5 style="margin-left: 0%;">Audio files</h5>
+                      <label class="switch">
+                        <input type="checkbox">
+                        <span class="slider round"></span>
+                      </label>
+                      </div>
+                      <p class="sw-Audio">Using a USB stick during the exam</p>
+                      <p class="sw-Audio">Using this option, you will be able to put in a USB stick into your student's computer and add the audio file during the exam.
+                      This ofcause requires the student computer to have a USB port</p>
+                      <h4 class="sw-Audio">Audio Files</h4>
+                      <p class="sw-Audio">Using a USB-stick during the exam</p>
+                      <button class="btn btn-danger" type="button sw-Audio">New Audio File</button>
+                      <div class="d-flex justify-content-lg-between sw-Audio">
+                        <h5 style="margin-left: 0%;">Activate audio file for all students</h5>
+                      <label class="switch">
+                        <input type="checkbox">
+                        <span class="slider round"></span>
+                      </label>
+                      </div>
+                      <p class="sw-Audio">If activated you can still use this feature for individual use</p>
+                    </div>
+                  </div>
+                </div>
+                <!--Subject Tool-->
+                <div class="card">
+                  <div class="card-header" role="tab" id="section3HeaderId">
+                    <h4 class="mb-0 sw-subject-tool">
+                      <a data-toggle="collapse" data-parent="#accordianId" href="#section3ContentId" aria-expanded="true" aria-controls="section3ContentId"><img src="{% static '/images/subject-tools.svg'%}">
+                        Subject tools
+                      </a>
+                    </h4>
+                  </div>
+                  <div id="section3ContentId" class="collapse in" role="tabpanel" aria-labelledby="section3HeaderId">
+                    <div class="card-body">
+                      <div class="d-flex justify-content-lg-between sw-subject-tool">
+                        <h5 style="margin-left: 0%;">Drawing Tool</h5>
+                      <label class="switch">
+                        <input type="checkbox">
+                        <span class="slider round"></span>
+                      </label>
+                      </div>
+                      <p>Gives access to drawing tools</p>
+                      <div class="d-flex justify-content-lg-between sw-subject-tool">
+                        <h5 style="margin-left: 0%;">Formula editor</h5>
+                      <label class="switch">
+                        <input type="checkbox">
+                        <span class="slider round"></span>
+                      </label>
+                      </div>
+                      <p class="sw-subject-tool">Gives access to Formual table</p>
+                      <div class="d-flex justify-content-lg-between sw-subject-tool">
+                        <h5 style="margin-left: 0%;">Calculator</h5>
+                      <label class="switch">
+                        <input type="checkbox">
+                        <span class="slider round"></span>
+                      </label>
+                      </div>
+                      <p class="sw-subject-tool">Gives access to Calculator for solving mathematical question</p>
+                      <div class="d-flex justify-content-lg-between sw-subject-tool">
+                        <h5 style="margin-left: 0%;">GeoGebra</h5>
+                      <label class="switch">
+                        <input type="checkbox">
+                        <span class="slider round"></span>
+                      </label>
+                      </div>
+                      <p class="sw-subject-tool">Gives access to GeoGebra tools</p>
+                      <div class="d-flex justify-content-lg-between sw-subject-tool">
+                        <h5 style="margin-left: 0%;">Desmos</h5>
+                      <label class="switch">
+                        <input type="checkbox">
+                        <span class="slider round"></span>
+                      </label>
+                      </div>
+                      <p class="sw-subject-tool">Gives access to Desmos tools</p>
+                      <div class="d-flex justify-content-lg-between sw-subject-tool">
+                        <h5 style="margin-left: 0%;">Programming</h5>
+                      <label class="switch">
+                        <input type="checkbox">
+                        <span class="slider round"></span>
+                      </label>
+                      </div>
+                      <p class="sw-subject-tool">Gives access to programming tools</p>
+                    </div>
+                  </div>
+                </div>
+                 <!--External Resources-->
+                <div class="card">
+                  <div class="card-header" role="tab" id="section4HeaderId">
+                    <h4 class="mb-0">
+                      <a data-toggle="collapse" data-parent="#accordianId" href="#section4ContentId" aria-expanded="true" aria-controls="section4ContentId"><img src="{% static '/images/External-resources.svg'%}">
+                        External External-resources
+                      </a>
+                    </h4>
+                  </div>
+                  <div id="section4ContentId" class="collapse in" role="tabpanel" aria-labelledby="section4HeaderId">
+                    <div class="card-body">
+                      <div class="card-body shadow sw-external-resorces">
+                        <img src="{% static '/images/exclamation-triangle.svg'%}" alt="exclamation-triangle" class="exclamation-triangle-et">
+                        <strong>
+                          <p class="card-text sw-external-resorces-text">
+                            To use this function you must use a high security mode (or disable cheat protection)
+                            <br>
+                            <br>
+                            Note that not all browsers allows embedding. Preview the exam to confirm that you requested resource works.
+                            Also remember that the student will be able follow links, should they be presented from the resource.
+                          </p>
+                        </strong>
+                      </div>
+                      <di class="sw-resource1">
+                        <label for="text" id="resourcename" aria-placeholder="Resource name"></label>
+                        <input class="sw-resource1" type="text" id="resourcename" placeholder="Resource name">
+                        <p>The name is shown in the student's exam menu</p>
+                        <label for="text" id="resourcename" aria-placeholder="Resource name"></label>
+                        <input class="sw-resource1" type="text" id="resourcename" placeholder="Resource name">
+                      </di>
+                    </div>
+                  </div>
+                </div>
+              </div>
+          </div>
+        </div>
+{% endblock content %} 

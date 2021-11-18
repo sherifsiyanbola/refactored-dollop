@@ -1,0 +1,105 @@
+{% extends 'includes/base.html' %}
+{% load static %}
+{% block title %} login {% endblock title %} 
+{% block content %}
+{% load i18n %}
+{% load account socialaccount %}
+
+{% load crispy_forms_filters %}
+<!--Content goes here-->
+
+<div class="row">
+    <div class="col-sm-7 card shadow   mx-auto signup-section p-0 pb-4">
+        <!-- <h2>Dynamic Tabs with jQuery</h2> -->
+        
+                {% for message in messages %}
+                <div class="container-fluid p-0">
+                <div class="alert {{ message.tags }} alert-dismissible" role="alert" >
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                    </button>
+                    {{ message }}
+                </div>
+                </div>
+                {% endfor %}
+        <!-- Nav tabs -->
+        <ul class="nav nav-tabs justify-content-center bg-secondary">
+          <li class="nav-item">
+            <a class="nav-link bg-danger text-white" active href="#home">Student</a>
+          </li>
+        </ul>
+      
+        <!-- Tab panes -->
+  {% if 'SEB' not in  user_agent and exam.require_high_security  %}
+<div class="container">
+<h1>Please install Safe Exam Browser to access this exam</h1>
+<h3><a href="https://safeexambrowser.org/download_en.html"> Click here to install </a></h3>
+</div>
+{% else %}
+        <div class="tab-content border mb-3">
+          <div id="home" class="container active tab-pane"><br>
+            <form method="POST" action="/take-exam">
+            {% csrf_token %}
+              {% if exam.first_name %}<input type = "text" class = "form-control" id="first_name" name="first_name" placeholder="Firstname" required/>{% endif %}              
+              {% if exam.last_name %}<input type = "text" class = "form-control" id="last_name" name="last_name" placeholder="Lastname" required/>{% endif %}
+              {% if exam.email %}<input type = "email" class = "form-control" id="email" name="email" placeholder="Email" />{% endif %}
+              {% if exam.student_class %}<input type = "text" class = "form-control" id="student_class" name="student_class" placeholder="Student Class" required/>{% endif %}
+              {% if exam.teacher_name %}<input type = "text" class = "form-control" id="teacher_name" name="teacher_name" placeholder="Teacher Name" required/>{% endif %}
+              {% if exam.student_id %}<input type = "text" class = "form-control" id="student_id" name="student_id" placeholder="Student ID" required/>{% endif %}
+              <input type = "text" name="key" value="{{exam.exam_key}}" hidden>
+            
+              <input type = "submit" class = "btn btn-success" value="Fetch Exam" />
+            </form>
+          </div>
+          <div id="menu1" class="container tab-pane"><br>
+        </div>
+      </div>
+    {% endif %}    
+      <script>
+      $(document).ready(function(){
+        $(".nav-tabs a").click(function(){
+          $(this).tab('show');
+        });
+        $('.nav-tabs a').on('shown.bs.tab', function(event){
+          var x = $(event.target).text();         // active tab
+          var y = $(event.relatedTarget).text();  // previous tab
+          $(".act span").text(x);
+          $(".prev span").text(y);
+        });
+      });
+      </script>
+</div>
+<script>
+    var navptab = document.getElementById('nav-profile-tab');
+    var navhtab = document.getElementById('nav-home-tab');
+
+
+
+
+
+    document.getElementById('nav-home-tab').onclick = function() {
+        this.style.background = "#0E3746";
+        this.style.color = "white";
+        navptab.style.background = "#ffffff";
+        navptab.style.color = "gray";
+
+    }
+
+    document.getElementById('nav-profile-tab').onclick = function() {
+        this.style.background = "#0E3746";
+        this.style.color = "white";
+        navhtab.style.background = "#ffffff";
+        navhtab.style.color = "gray";
+
+    }
+
+    document.getElementById('student_show').onclick = function() {
+        this.style.display = 'none';
+
+
+    }
+</script>
+
+
+
+{% endblock content %}
